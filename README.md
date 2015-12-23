@@ -1,19 +1,23 @@
 # Wiremock extensions
 
-## Place holder transformer (wiremock.PlaceHolderTransformer)
+## Extensions list
+
+* Placeholder transformer 
+
+## Placeholder transformer
 
 Allows specifying placeholders in the mapped response that will be replaced based on the values of the different query parameters or body properties.
 
 
-## Usage
+### Usage
 
 ```
 java -cp "wiremock-extensions-1.0.jar:wiremock-1.57-standalone.jar" com.github.tomakehurst.wiremock.standalone.WireMockServerRunner --extensions wiremock.PlaceholderTransformer
 ```
 
-## Example
+### Example
 
-### Mapping
+#### Mapping
 ```
 {
 	"priority": 1,
@@ -33,33 +37,33 @@ java -cp "wiremock-extensions-1.0.jar:wiremock-1.57-standalone.jar" com.github.t
 }
 ```
 
-### Request (with query string parameter)
+#### Request (with query string parameter)
 
 ```
 POST /some-url?someValue=123
 Request: { }
 ```
 
-### Response
+#### Response
 
 ```
 { "value": "123" }
 ```
 
-### Request (with post property)
+#### Request (with post property)
 
 ```
 POST /some-url
 Request: { "someValue": "456" }
 ```
 
-### Response
+#### Response
 
 ```
 { "value": "456" }
 ```
 
-## Reference
+### Reference
 
 The extension will replace the placeholder with its value no matter if the response body is set literally (using Wiremock's "body" property) or via a "bodyFileName".
 
