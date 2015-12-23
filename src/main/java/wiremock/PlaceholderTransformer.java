@@ -7,6 +7,7 @@ import com.github.tomakehurst.wiremock.http.QueryParameter;
 import com.github.tomakehurst.wiremock.http.Request;
 import com.github.tomakehurst.wiremock.http.ResponseDefinition;
 import com.google.common.collect.Maps;
+import com.jayway.jsonpath.JsonPath;
 import java.nio.charset.Charset;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -26,7 +27,7 @@ public class PlaceholderTransformer extends ResponseTransformer {
 	public String name() {
 		return "placeholder-transformer";
 	}
-	
+
 	@Override
 	public boolean applyGlobally() {
 		return false;
@@ -40,17 +41,17 @@ public class PlaceholderTransformer extends ResponseTransformer {
 			responseBody = new String(files.getBinaryFileNamed(responseDefinition.getBodyFileName()).readContents(),
 					Charset.defaultCharset());
 		}
-		return ResponseDefinitionBuilder.like(responseDefinition).but()
-				.withBody(this.transformResponse(new WiremockRequest(request), responseBody)).build();
+		return ResponseDefinitionBuilder.like(responseDefinition).but().withBody(this.transformResponse(request, responseBody)).build();
 	}
 
-	private String transformResponse(WiremockRequest request, String response) {
+	private String transformResponse(Request request, String response) {
 		Matcher matcher = PATTERN.matcher(response);
+		String requestBody = request.getBodyAsString();
 		Map<String, String> placeholders = Maps.newHashMap();
 		while (matcher.find()) {
 			String placeholder = matcher.group();
 			if (!placeholders.containsKey(placeholder)) {
-				String value = this.lookupValue(placeholder, request);
+				String value = this.lookupValue(placeholder, request, requestBody);
 				System.out.println("Placeholder " + placeholder + " will be replace with value " + value);
 				placeholders.put(placeholder, value);
 			}
@@ -59,17 +60,17 @@ public class PlaceholderTransformer extends ResponseTransformer {
 				placeholders.values().toArray(new String[] {}));
 	}
 
-	private String lookupValue(String placeholder, WiremockRequest request) {
+	private String lookupValue(String placeholder, Request request, String requestBody) {
 		String property = placeholder.substring(2, placeholder.length() - 1);
 		String lookupValue = this.lookupQueryParamValue(property, request);
 		if (lookupValue != null) {
 			return lookupValue;
 		}
-		return this.lookupBodyValue(property, request);
+		return this.lookupBodyValue(property, requestBody);
 	}
 
-	private String lookupQueryParamValue(String property, WiremockRequest request) {
-		QueryParameter queryParameter = request.getRequest().queryParameter(property);
+	private String lookupQueryParamValue(String property, Request request) {
+		QueryParameter queryParameter = request.queryParameter(property);
 		if (queryParameter.isPresent()) {
 			System.out.println("Placeholder found in query params");
 			return Strings.join(queryParameter.values(), ",");
@@ -77,8 +78,8 @@ public class PlaceholderTransformer extends ResponseTransformer {
 		return null;
 	}
 
-	private String lookupBodyValue(String property, WiremockRequest request) {
-		String value = request.getJson().read(property);
+	private String lookupBodyValue(String property, String request) {
+		String value = JsonPath.read(request, property);
 		if (value != null) {
 			System.out.println("Placeholder found in body");
 			return value;
