@@ -7,12 +7,14 @@ Allows specifying placeholders in the mapped response that will be replaced base
 
 ## Usage
 
+```
 java -cp "wiremock-extensions-1.0.jar:wiremock-1.57-standalone.jar" com.github.tomakehurst.wiremock.standalone.WireMockServerRunner --extensions wiremock.PlaceholderTransformer
+```
 
 ## Example
 
 ### Mapping
-
+```
 {
 	"priority": 1,
 	"request": {
@@ -29,24 +31,33 @@ java -cp "wiremock-extensions-1.0.jar:wiremock-1.57-standalone.jar" com.github.t
 		"body": "{ \"value\": \"${someValue}\" }"
 	}
 }
+```
 
 ### Request (with query string parameter)
 
+```
 POST /some-url?someValue=123
 Request: { }
+```
 
 ### Response
 
+```
 { "value": "123" }
+```
 
 ### Request (with post property)
 
+```
 POST /some-url
 Request: { "someValue": "456" }
+```
 
 ### Response
 
+```
 { "value": "456" }
+```
 
 ## Reference
 
