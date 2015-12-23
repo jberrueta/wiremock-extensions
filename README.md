@@ -2,7 +2,7 @@
 
 ## Extensions list
 
-* Placeholder transformer 
+* [Placeholder transformer](#placeholder-transformer)
 
 ## Placeholder transformer
 
