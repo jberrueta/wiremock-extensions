@@ -26,6 +26,11 @@ public class PlaceholderTransformer extends ResponseTransformer {
 	public String name() {
 		return "placeholder-transformer";
 	}
+	
+	@Override
+	public boolean applyGlobally() {
+		return false;
+	}
 
 	@Override
 	public ResponseDefinition transform(Request request, ResponseDefinition responseDefinition, FileSource files) {

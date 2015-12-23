@@ -32,7 +32,8 @@ java -cp "wiremock-extensions-1.0.jar:wiremock-1.57-standalone.jar" com.github.t
 			"Accept": "application/json"
 		},
 		"status": 200,
-		"body": "{ \"value\": \"${someValue}\" }"
+		"body": "{ \"value\": \"${someValue}\" }",
+		"transformers": ["placeholder-transformer"]
 	}
 }
 ```
